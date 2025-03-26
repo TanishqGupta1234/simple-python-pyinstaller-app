@@ -1,10 +1,24 @@
 pipeline {
-    agent any 
+    agent any
     stages {
-        stage('Build') { 
+        stage('Clone Repository') {
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py' 
-                stash(name: 'compiled-results', includes: 'sources/*.py*') 
+                git 'https://github.com/TanishqGupta1234/simple-python-pyinstaller-app.git'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'pytest'  // Run tests (if applicable)
+            }
+        }
+        stage('Build Executable') {
+            steps {
+                sh 'pyinstaller --onefile main.py'  // Change `main.py` to your Python entry file
             }
         }
     }
